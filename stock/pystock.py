@@ -14,6 +14,7 @@ class pystock:
         )
 
     def _connStop(self):
+        self.connection.commit()
         self.connection.close()
 
     def list(self, code=0):
@@ -31,12 +32,20 @@ class pystock:
                 print(result)
                 cursor.close()              
         except:
-            print("Execute SQL Failure")
+            print("Query interest_list failure")
         
         self._connStop()
 
     def add(self, code):
-        pass
+        self._connStart()
+        sql = "CREATE TABLE IF NOT EXISTS {} ( id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, price FLOAT NOT NULL, date DATE NOT NULL)".format("_" + code)
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(sql)
+                cursor.close()
+        except:
+            print("Create table failure")
+        self._connStop()
 
     def delete(self, code):
         pass
@@ -47,6 +56,7 @@ class pystock:
 def main():
     t=pystock()
     t.list()
+    t.add("1234")
 
 if __name__ == "__main__":
     main()
